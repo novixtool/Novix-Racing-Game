@@ -3,55 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-  <title>Novix Racing HD</title>
+  <title>Subway Runner</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; font-family: 'Segoe UI', Arial, sans-serif; }
     canvas { width: 100%; height: 100%; display: block; }
 
     #hud {
-      position: fixed; top: 20px; left: 20px; right: 20px;
+      position: fixed; top: 15px; left: 15px; right: 15px;
       display: flex; justify-content: space-between; pointer-events: none;
-      color: #fff; font-weight: 800; text-transform: uppercase;
+      color: #fff; font-weight: 800; z-index: 10;
     }
     .hud-card {
-      background: rgba(0, 0, 0, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 8px 14px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 12px;
       border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
     }
-    .hud-title { font-size: 10px; color: #aaa; letter-spacing: 1px; }
-    .hud-val { font-size: 24px; font-weight: 900; color: #fff; }
-
-    #speedo-wrap {
-      position: fixed; bottom: 20px; right: 20px; pointer-events: none;
-      width: 160px; height: 160px;
-      background: radial-gradient(circle, #1a1a2e 0%, #000 70%);
-      border: 4px solid #444;
-      border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,0,0,0.5);
-    }
-    #speedo-val { font-size: 40px; font-weight: 900; color: #fff; line-height: 1; }
-    #speedo-unit { font-size: 12px; font-weight: bold; color: #ff4444; margin-top: 2px; }
+    .hud-title { font-size: 10px; color: #aaa; }
+    .hud-val { font-size: 22px; font-weight: 900; color: #fff; }
 
     #controls {
-      position: fixed; bottom: 30px; left: 24px;
-      display: flex; gap: 20px;
+      position: fixed; bottom: 30px; left: 24px; right: 24px;
+      display: flex; justify-content: space-between;
     }
     .ctrl-btn {
-      width: 80px; height: 80px; border-radius: 50%;
+      width: 75px; height: 75px; border-radius: 50%;
       background: rgba(255, 255, 255, 0.15);
       border: 2px solid rgba(255, 255, 255, 0.4);
-      color: #fff; font-size: 32px;
+      color: #fff; font-size: 28px;
       display: flex; align-items: center; justify-content: center;
       outline: none; cursor: pointer;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
     .ctrl-btn:active { background: rgba(255, 255, 255, 0.4); transform: scale(0.92); }
 
-    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); }
+    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); }
     .box {
       background: linear-gradient(135deg, #0d1117, #161b22);
       border: 1px solid #30363d;
@@ -61,14 +49,12 @@
     }
     .box h1 { font-size: 30px; color: #fff; margin-bottom: 6px; }
     .btn-action {
-      margin-top: 15px; padding: 14px 40px; border: 0; border-radius: 10px;
+      margin-top: 18px; padding: 14px 40px; border: 0; border-radius: 10px;
       background: linear-gradient(135deg, #ff4444, #cc0000);
       color: white; font-size: 18px; font-weight: 800;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(255,68,68,0.4);
-      transition: transform 0.1s;
     }
-    .btn-action:hover { transform: scale(1.02); }
     .hide { display: none !important; }
   </style>
 </head>
@@ -76,16 +62,9 @@
   <canvas id="c"></canvas>
 
   <div id="hud" class="hide">
-    <div class="hud-card"><div class="hud-title">POS</div><div class="hud-val" id="pos">3/6</div></div>
-    <div style="display:flex; gap:10px;">
-      <div class="hud-card"><div class="hud-title">TIME</div><div class="hud-val" id="timer">00:00</div></div>
-      <div class="hud-card"><div class="hud-title">SCORE</div><div class="hud-val" id="score">0</div></div>
-    </div>
-  </div>
-
-  <div id="speedo-wrap" class="hide">
-    <div id="speedo-val">0</div>
-    <div id="speedo-unit">KM/H</div>
+    <div class="hud-card"><div class="hud-title">SCORE</div><div class="hud-val" id="score">0</div></div>
+    <div class="hud-card"><div class="hud-title">COINS</div><div class="hud-val" id="coins">0</div></div>
+    <div class="hud-card"><div class="hud-title">SPEED</div><div class="hud-val" id="speed">0</div></div>
   </div>
 
   <div id="controls" class="hide">
@@ -95,310 +74,264 @@
 
   <div id="menu" class="panel">
     <div class="box">
-      <h1>NOVIX RACING HD</h1>
-      <p style="color:#888; font-size:14px; margin-bottom:15px;">REALISTIC 2D RACING</p>
+      <h1>SUBWAY RUNNER</h1>
+      <p style="color:#888; font-size:14px; margin-bottom:15px;">ENDLESS RUNNER GAME</p>
       <button class="btn-action" id="start-btn">PLAY</button>
-      <button class="btn-action" style="background:linear-gradient(135deg,#444,#222);" onclick="alert('Garage Coming Soon!')">GARAGE</button>
-      <button class="btn-action" style="background:linear-gradient(135deg,#444,#222);" onclick="alert('Settings Coming Soon!')">SETTINGS</button>
     </div>
   </div>
 
   <div id="over" class="panel hide">
     <div class="box">
-      <h1 style="color:#ff4444;">CRASHED!</h1>
-      <p style="margin: 15px 0; font-size:18px;">Final Score: <b id="final-score" style="color:#38bdf8;">0</b></p>
+      <h1 style="color:#ff4444;">GAME OVER!</h1>
+      <p style="margin: 15px 0; font-size:16px;">Score: <b id="final-score" style="color:#38bdf8;">0</b></p>
+      <p style="font-size:14px; color:#aaa;">Coins: <b id="final-coins" style="color:#ffd700;">0</b></p>
       <button class="btn-action" id="again-btn">TRY AGAIN</button>
     </div>
   </div>
 
 <script>
 const c = document.getElementById('c'), ctx = c.getContext('2d');
-let W, H, horizon, run = false, lastTime = 0;
-let carX = 0, speed = 0, maxSpeed = 260, score = 0, elapsed = 0;
-let traffic = [], key = { l: false, r: false };
+let W, H, run = false, lastTime = 0;
+let score = 0, coins = 0, speed = 10;
+let playerLane = 1, targetLane = 1;
+let obstacles = [], coinList = [], particles = [];
+let groundOffset = 0;
 
 function resize() {
   W = innerWidth; H = innerHeight;
   c.width = W * devicePixelRatio; c.height = H * devicePixelRatio;
   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-  horizon = H * 0.45;
 }
 window.addEventListener('resize', resize);
 resize();
 
-// **HD Car Drawing with Details**
-function drawSportsCar(x, y, scale, color, isPlayer = false) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(scale, scale);
-
-  // Shadow (soft)
-  ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.shadowColor = 'rgba(0,0,0,0.6)';
-  ctx.shadowBlur = 15;
-  ctx.beginPath();
-  ctx.ellipse(0, 22, 60, 14, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-
-  // Tire with rim detail
-  ctx.fillStyle = '#111';
-  ctx.fillRect(-52, 2, 18, 30);
-  ctx.fillRect(34, 2, 18, 30);
-  
-  // Silver rims
-  ctx.fillStyle = '#ccc';
-  ctx.fillRect(-48, 6, 10, 22);
-  ctx.fillRect(38, 6, 10, 22);
-
-  // Body gradient
-  let grad = ctx.createLinearGradient(-45, -15, 45, 25);
-  grad.addColorStop(0, color);
-  grad.addColorStop(1, shadeColor(color, -30));
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.roundRect(-46, -16, 92, 42, [12, 12, 8, 8]);
-  ctx.fill();
-
-  // White Racing Stripes
-  if (isPlayer) {
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(-7, -16, 5, 42);
-    ctx.fillRect(2, -16, 5, 42);
-  }
-
-  // Cabin
-  ctx.fillStyle = '#0a0a0a';
-  ctx.beginPath();
-  ctx.moveTo(-32, -16);
-  ctx.lineTo(32, -16);
-  ctx.lineTo(24, -40);
-  ctx.lineTo(-24, -40);
-  ctx.closePath();
-  ctx.fill();
-
-  // Glass with reflection
-  let glassGrad = ctx.createLinearGradient(-15, -38, 15, -16);
-  glassGrad.addColorStop(0, 'rgba(120,200,255,0.6)');
-  glassGrad.addColorStop(1, 'rgba(120,200,255,0.1)');
-  ctx.fillStyle = glassGrad;
-  ctx.beginPath();
-  ctx.moveTo(-16, -37);
-  ctx.lineTo(12, -37);
-  ctx.lineTo(6, -18);
-  ctx.lineTo(-18, -18);
-  ctx.closePath();
-  ctx.fill();
-
-  // Tail lights (glowing)
-  ctx.shadowColor = '#ff0000';
-  ctx.shadowBlur = 12;
-  ctx.fillStyle = '#ff0000';
-  ctx.fillRect(-40, -8, 18, 8);
-  ctx.fillRect(22, -8, 18, 8);
-  ctx.shadowBlur = 0;
-
-  // Spoiler
-  ctx.fillStyle = isPlayer ? '#222' : '#333';
-  ctx.fillRect(-38, -44, 76, 4);
-  ctx.fillRect(-42, -40, 84, 3);
-
-  ctx.restore();
+// Lane position (3 lanes)
+function laneX(lane) {
+  return (W / 2) + (lane - 1) * (W * 0.3);
 }
 
-// **HD Environment**
-function drawEnvironment() {
-  // Sky gradient
-  let sky = ctx.createLinearGradient(0, 0, 0, horizon);
-  sky.addColorStop(0, '#1a5276');
-  sky.addColorStop(0.5, '#2980b9');
-  sky.addColorStop(1, '#85c1e9');
-  ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, W, horizon);
+// Player character (2.5D style)
+function drawPlayer() {
+  let x = laneX(playerLane);
+  let y = H - 120;
+  
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.beginPath();
+  ctx.ellipse(x, y + 40, 25, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Body
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(x - 18, y - 30, 36, 60);
+  
+  // Head
+  ctx.fillStyle = '#ffcc99';
+  ctx.beginPath();
+  ctx.arc(x, y - 40, 15, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Hair
+  ctx.fillStyle = '#333';
+  ctx.beginPath();
+  ctx.arc(x, y - 45, 14, Math.PI, Math.PI * 2);
+  ctx.fill();
+  
+  // Arms (running animation)
+  let armSwing = Math.sin(performance.now() / 100) * 20;
+  ctx.fillStyle = '#ffcc99';
+  ctx.fillRect(x - 25, y - 15 + armSwing, 10, 25);
+  ctx.fillRect(x + 15, y - 15 - armSwing, 10, 25);
+  
+  // Legs
+  ctx.fillStyle = '#3366ff';
+  ctx.fillRect(x - 15, y + 20, 12, 20);
+  ctx.fillRect(x + 3, y + 20, 12, 20);
+  
+  // Backpack
+  ctx.fillStyle = '#ffd700';
+  ctx.fillRect(x - 10, y - 20, 20, 35);
+}
 
-  // Sun with glow
+// Obstacles (train/barrier)
+function drawObstacle(obs) {
+  let x = laneX(obs.lane);
+  let y = obs.y;
+  
+  if (obs.type === 'train') {
+    // Train
+    ctx.fillStyle = '#666';
+    ctx.fillRect(x - 30, y - 50, 60, 50);
+    ctx.fillStyle = '#888';
+    ctx.fillRect(x - 25, y - 45, 50, 40);
+  } else if (obs.type === 'barrier') {
+    // Barrier
+    ctx.fillStyle = '#ff6600';
+    ctx.fillRect(x - 20, y - 30, 40, 30);
+    ctx.fillStyle = '#ffcc00';
+    ctx.fillRect(x - 20, y - 25, 40, 5);
+  }
+}
+
+// Coins
+function drawCoin(coin) {
+  let x = laneX(coin.lane);
+  let y = coin.y;
+  
   ctx.fillStyle = '#ffd700';
   ctx.shadowColor = '#ffd700';
-  ctx.shadowBlur = 30;
+  ctx.shadowBlur = 10;
   ctx.beginPath();
-  ctx.arc(W * 0.85, horizon * 0.3, 25, 0, Math.PI * 2);
+  ctx.arc(x, y, 12, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
-
-  // Distant Mountains (lighter)
-  ctx.fillStyle = '#5d8a5d';
+  
+  ctx.fillStyle = '#ffaa00';
   ctx.beginPath();
-  ctx.moveTo(0, horizon);
-  ctx.lineTo(W * 0.2, horizon - 100);
-  ctx.lineTo(W * 0.4, horizon - 30);
-  ctx.lineTo(W * 0.6, horizon - 110);
-  ctx.lineTo(W * 0.8, horizon - 40);
-  ctx.lineTo(W, horizon);
+  ctx.arc(x, y, 8, 0, Math.PI * 2);
   ctx.fill();
+}
 
-  // Near Mountains (darker)
-  ctx.fillStyle = '#2d5a27';
-  ctx.beginPath();
-  ctx.moveTo(0, horizon);
-  ctx.lineTo(W * 0.15, horizon - 70);
-  ctx.lineTo(W * 0.35, horizon - 20);
-  ctx.lineTo(W * 0.55, horizon - 80);
-  ctx.lineTo(W * 0.75, horizon - 25);
-  ctx.lineTo(W, horizon);
-  ctx.fill();
-
-  // Ground with grass texture
-  let grassGrad = ctx.createLinearGradient(0, horizon, 0, H);
-  grassGrad.addColorStop(0, '#2e7d32');
-  grassGrad.addColorStop(1, '#1b5e20');
-  ctx.fillStyle = grassGrad;
-  ctx.fillRect(0, horizon, W, H - horizon);
-
-  // Small trees on roadside
-  ctx.fillStyle = '#1b5e20';
-  for (let i = 0; i < 10; i++) {
-    let tx = (i * 100) % W;
-    let ty = horizon + 10 + (i % 3) * 15;
+// Environment (2.5D ground)
+function drawEnvironment() {
+  // Sky
+  let skyGrad = ctx.createLinearGradient(0, 0, 0, H);
+  skyGrad.addColorStop(0, '#87ceeb');
+  skyGrad.addColorStop(1, '#e0f7fa');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  for (let i = 0; i < 5; i++) {
+    let cx = (i * 200 + 50) % W;
+    let cy = 50 + i * 20;
     ctx.beginPath();
-    ctx.moveTo(tx, ty - 30);
-    ctx.lineTo(tx - 15, ty);
-    ctx.lineTo(tx + 15, ty);
+    ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+    ctx.arc(cx + 15, cy - 5, 18, 0, Math.PI * 2);
+    ctx.arc(cx + 30, cy, 15, 0, Math.PI * 2);
     ctx.fill();
+  }
+  
+  // Ground (moving)
+  groundOffset = (groundOffset + speed * 0.5) % 100;
+  ctx.fillStyle = '#4a4a4a';
+  ctx.fillRect(0, H - 80, W, 80);
+  
+  // Track lines
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 3;
+  for (let i = 0; i < 4; i++) {
+    let x = laneX(i);
+    ctx.beginPath();
+    ctx.moveTo(x, H - 80);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  
+  // Moving ground pattern
+  ctx.fillStyle = '#3a3a3a';
+  for (let i = 0; i < 10; i++) {
+    let x = (i * 60 - groundOffset) % W;
+    ctx.fillRect(x, H - 80, 30, 80);
   }
 }
 
-// **HD Road**
-let roadOffset = 0;
-function drawRoad() {
-  let roadBottomW = Math.min(W * 0.88, 620);
-  let roadTopW = roadBottomW * 0.1;
-  let cx = W / 2;
-
-  // Road base
-  let roadGrad = ctx.createLinearGradient(0, horizon, 0, H);
-  roadGrad.addColorStop(0, '#444');
-  roadGrad.addColorStop(1, '#222');
-  ctx.fillStyle = roadGrad;
-  ctx.beginPath();
-  ctx.moveTo(cx - roadTopW / 2, horizon);
-  ctx.lineTo(cx + roadTopW / 2, horizon);
-  ctx.lineTo(cx + roadBottomW / 2, H);
-  ctx.lineTo(cx - roadBottomW / 2, H);
-  ctx.closePath();
-  ctx.fill();
-
-  // Center dashed line
-  roadOffset = (roadOffset + speed * 0.06) % 60;
-  ctx.strokeStyle = '#ffcc00';
-  ctx.lineWidth = 5;
-  ctx.setLineDash([25, 25]);
-  ctx.lineDashOffset = -roadOffset;
-  ctx.beginPath();
-  ctx.moveTo(cx, horizon);
-  ctx.lineTo(cx, H);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // White edges with glow
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 5;
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(cx - roadTopW / 2, horizon);
-  ctx.lineTo(cx - roadBottomW / 2, H);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx + roadTopW / 2, horizon);
-  ctx.lineTo(cx + roadBottomW / 2, H);
-  ctx.stroke();
-  ctx.shadowBlur = 0;
+function spawnObstacle() {
+  let lane = Math.floor(Math.random() * 3);
+  let type = Math.random() > 0.5 ? 'train' : 'barrier';
+  obstacles.push({ lane: lane, y: -100, type: type });
 }
 
-// **Helper to darken colors**
-function shadeColor(color, percent) {
-  let num = parseInt(color.replace('#', ''), 16);
-  let r = (num >> 16) + percent;
-  let g = ((num >> 8) & 0x00FF) + percent;
-  let b = (num & 0x0000FF) + percent;
-  r = Math.max(0, Math.min(255, r));
-  g = Math.max(0, Math.min(255, g));
-  b = Math.max(0, Math.min(255, b));
-  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
-}
-
-function spawnTraffic() {
-  const lanes = [-0.6, 0, 0.6];
-  const lane = lanes[Math.floor(Math.random() * lanes.length)];
-  const colors = ['#1e90ff', '#ff8c00', '#808080', '#32cd32'];
-  traffic.push({
-    lane: lane,
-    progress: 0.05,
-    color: colors[Math.floor(Math.random() * colors.length)]
-  });
+function spawnCoin() {
+  let lane = Math.floor(Math.random() * 3);
+  coinList.push({ lane: lane, y: -50 });
 }
 
 function loop(t) {
   if (!run) return;
   let dt = Math.min((t - lastTime) / 1000, 0.05);
   lastTime = t;
-  elapsed += dt;
-
-  if (key.l) carX -= 1.8 * dt;
-  if (key.r) carX += 1.8 * dt;
-  carX = Math.max(-0.85, Math.min(0.85, carX));
-
-  speed = Math.min(maxSpeed, speed + dt * 30);
-  score += speed * dt * 0.2;
-
+  
+  // Score update
+  score += speed * dt;
+  speed = Math.min(30, speed + dt * 2);
+  
+  // Player movement
+  if (targetLane > playerLane) playerLane += dt * 10;
+  if (targetLane < playerLane) playerLane -= dt * 10;
+  playerLane = Math.max(0, Math.min(2, playerLane));
+  
+  // Spawn obstacles/coins
+  if (Math.random() < 0.02) spawnObstacle();
+  if (Math.random() < 0.03) spawnCoin();
+  
+  // Move obstacles
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    let obs = obstacles[i];
+    obs.y += speed * 2 * dt;
+    
+    if (obs.y > H) {
+      obstacles.splice(i, 1);
+      continue;
+    }
+    
+    // Collision detection
+    let px = laneX(playerLane);
+    let ox = laneX(obs.lane);
+    if (Math.abs(px - ox) < 30 && obs.y > H - 150 && obs.y < H - 50) {
+      gameOver();
+      return;
+    }
+  }
+  
+  // Move coins
+  for (let i = coinList.length - 1; i >= 0; i--) {
+    let coin = coinList[i];
+    coin.y += speed * 2 * dt;
+    
+    if (coin.y > H) {
+      coinList.splice(i, 1);
+      continue;
+    }
+    
+    // Coin collection
+    let px = laneX(playerLane);
+    let cx = laneX(coin.lane);
+    if (Math.abs(px - cx) < 30 && coin.y > H - 160 && coin.y < H - 50) {
+      coins++;
+      coinList.splice(i, 1);
+    }
+  }
+  
+  // Render
   ctx.clearRect(0, 0, W, H);
   drawEnvironment();
-  drawRoad();
-
-  if (Math.random() < 0.015) spawnTraffic();
-
-  let playerBottomY = H - 100;
-  let roadBottomW = Math.min(W * 0.88, 620);
-
-  for (let i = traffic.length - 1; i >= 0; i--) {
-    let car = traffic[i];
-    car.progress += (speed * 0.0015) * dt;
-
-    let y = horizon + (H - horizon) * Math.pow(car.progress, 2);
-    let currentRoadW = (roadBottomW * 0.1) + (roadBottomW - (roadBottomW * 0.1)) * car.progress;
-    let x = (W / 2) + car.lane * (currentRoadW / 2.3);
-    let scale = 0.2 + car.progress * 0.9;
-
-    drawSportsCar(x, y, scale, car.color, false);
-
-    if (car.progress > 0.85 && car.progress < 0.98) {
-      let px = (W / 2) + carX * (roadBottomW / 2.3);
-      if (Math.abs(px - x) < 50) {
-        gameOver();
-        return;
-      }
-    }
-    if (car.progress > 1.1) traffic.splice(i, 1);
-  }
-
-  let playerScreenX = (W / 2) + carX * (roadBottomW / 2.3);
-  drawSportsCar(playerScreenX, playerBottomY, 1.1, '#cc0000', true);
-
-  document.getElementById('speedo-val').textContent = Math.floor(speed);
+  
+  // Draw obstacles
+  for (let obs of obstacles) drawObstacle(obs);
+  
+  // Draw coins
+  for (let coin of coinList) drawCoin(coin);
+  
+  // Draw player
+  drawPlayer();
+  
+  // Update UI
   document.getElementById('score').textContent = Math.floor(score);
-  let mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
-  let secs = String(Math.floor(elapsed % 60)).padStart(2, '0');
-  document.getElementById('timer').textContent = `${mins}:${secs}`;
-
+  document.getElementById('coins').textContent = coins;
+  document.getElementById('speed').textContent = Math.floor(speed * 10);
+  
   requestAnimationFrame(loop);
 }
 
 function startGame() {
-  run = true; speed = 50; score = 0; elapsed = 0; carX = 0; traffic = [];
+  run = true; score = 0; coins = 0; speed = 10;
+  playerLane = 1; targetLane = 1;
+  obstacles = []; coinList = [];
   document.getElementById('menu').classList.add('hide');
   document.getElementById('over').classList.add('hide');
   document.getElementById('hud').classList.remove('hide');
-  document.getElementById('speedo-wrap').classList.remove('hide');
   document.getElementById('controls').classList.remove('hide');
   lastTime = performance.now();
   requestAnimationFrame(loop);
@@ -407,9 +340,11 @@ function startGame() {
 function gameOver() {
   run = false;
   document.getElementById('final-score').textContent = Math.floor(score);
+  document.getElementById('final-coins').textContent = coins;
   document.getElementById('over').classList.remove('hide');
 }
 
+// Controls
 function bindTouch(id, k) {
   const el = document.getElementById(id);
   el.addEventListener('pointerdown', e => { e.preventDefault(); key[k] = true; });
@@ -420,16 +355,16 @@ bindTouch('btn-l', 'l');
 bindTouch('btn-r', 'r');
 
 window.addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') key.l = true;
-  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') key.r = true;
-});
-window.addEventListener('keyup', e => {
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') key.l = false;
-  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') key.r = false;
+  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+    if (targetLane > 0) targetLane--;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+    if (targetLane < 2) targetLane++;
+  }
 });
 
 document.getElementById('start-btn').onclick = startGame;
 document.getElementById('again-btn').onclick = startGame;
 </script>
 </body>
-</html>
+  </html>
