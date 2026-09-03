@@ -3,109 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-  <title>Novix Racing 3D Style</title>
+  <title>Novix Racing 2D</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    html, body { 
-      width: 100%; height: 100%; overflow: hidden; 
-      background: linear-gradient(180deg, #1e1b4b 0%, #4c1d95 50%, #7c3aed 100%); 
-      font-family: 'Segoe UI', Arial, sans-serif; 
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
     canvas { width: 100%; height: 100%; display: block; }
 
+    /* HUD - Clean Modern */
     #hud {
-      position: fixed; top: 14px; left: 16px; right: 16px;
+      position: fixed; top: 20px; left: 20px; right: 20px;
       display: flex; justify-content: space-between; pointer-events: none;
       color: #fff; font-weight: 800; text-transform: uppercase;
     }
     .hud-card {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 8px 16px;
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 14px;
+      border-radius: 8px;
     }
-    .hud-title { 
-      font-size: 10px; 
-      color: #00ffff; 
-      letter-spacing: 2px; 
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-    }
-    .hud-val { 
-      font-size: 22px; 
-      font-weight: 900; 
-      color: #fff; 
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-    }
+    .hud-title { font-size: 11px; color: #aaa; letter-spacing: 1px; }
+    .hud-val { font-size: 22px; font-weight: 900; color: #fff; }
 
+    /* Speedometer - Needle Style */
     #speedo-wrap {
       position: fixed; bottom: 20px; right: 20px; pointer-events: none;
-      width: 140px; height: 140px;
-      background: rgba(10, 15, 30, 0.7);
-      border: 2px solid #00ffff;
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, #1a1a2e 0%, #000 70%);
+      border: 3px solid #333;
       border-radius: 50%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 
-        0 0 20px rgba(0, 255, 255, 0.4),
-        inset 0 0 20px rgba(0, 255, 255, 0.2);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.8);
     }
-    #speedo-val {
-      font-size: 38px;
-      font-weight: 900;
-      color: #00ffff;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    }
-    #speedo-unit {
-      font-size: 12px;
-      color: #ff00ff;
-      text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
-      margin-top: 2px;
-    }
+    #speedo-val { font-size: 36px; font-weight: 900; color: #fff; line-height: 1; }
+    #speedo-unit { font-size: 11px; font-weight: bold; color: #ff4444; margin-top: 2px; }
 
+    /* Controls */
     #controls {
       position: fixed; bottom: 30px; left: 24px;
-      display: flex; gap: 18px; pointer-events: none;
+      display: flex; gap: 20px;
     }
     .ctrl-btn {
-      width: 68px; height: 68px; border-radius: 50%;
-      background: rgba(0, 255, 255, 0.15);
-      border: 2px solid #00ffff;
-      color: #00ffff; font-size: 26px;
+      width: 75px; height: 75px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      color: #fff; font-size: 30px;
       display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(6px); pointer-events: auto; outline: none; cursor: pointer;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      outline: none; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    .ctrl-btn:active {
-      background: rgba(0, 255, 255, 0.4);
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
-      transform: scale(0.92);
-    }
+    .ctrl-btn:active { background: rgba(255, 255, 255, 0.4); transform: scale(0.95); }
 
-    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); }
+    /* Menus - Dark Professional */
+    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); }
     .box {
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      border: 1px solid #00ffff;
-      color: white; padding: 30px 24px; border-radius: 20px;
-      text-align: center; width: 88%; max-width: 380px;
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: white; padding: 30px 24px; border-radius: 12px;
+      text-align: center; width: 90%; max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
     }
-    .box h1 {
-      font-size: 36px;
-      color: #00ffff;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-      font-family: 'Orbitron', sans-serif;
-      margin-bottom: 6px;
-    }
+    .box h1 { font-size: 28px; color: #fff; margin-bottom: 6px; }
     .btn-action {
-      margin-top: 20px; padding: 14px 34px; border: 0; border-radius: 12px;
-      background: linear-gradient(135deg, #00ffff, #00b3ff);
-      color: #0f0c29; font-size: 20px; font-weight: 800;
+      margin-top: 18px; padding: 14px 40px; border: 0; border-radius: 8px;
+      background: linear-gradient(135deg, #ff4444, #cc0000);
+      color: white; font-size: 18px; font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 5px 25px rgba(0, 255, 255, 0.6);
+      box-shadow: 0 4px 15px rgba(255,68,68,0.4);
     }
+    .btn-action:hover { transform: scale(1.02); }
     .hide { display: none !important; }
   </style>
 </head>
@@ -133,15 +98,17 @@
   <div id="menu" class="panel">
     <div class="box">
       <h1>NOVIX RACING</h1>
-      <p style="color:#94a3b8; font-size:14px; margin-bottom:18px;">HIGH SPEED ARCADE RACER</p>
-      <p style="font-size:14px; line-height:1.5;">Arrow Keys ya Buttons se car control karein aur traffic se bachein!</p>
-      <button class="btn-action" id="start-btn">RACE START</button>
+      <p style="color:#888; font-size:14px; margin-bottom:15px;">2D ARCADE RACER</p>
+      <button class="btn-action" id="start-btn">PLAY</button>
+      <button class="btn-action" style="background:linear-gradient(135deg,#444,#222);" onclick="alert('Garage Coming Soon!')">GARAGE</button>
+      <button class="btn-action" style="background:linear-gradient(135deg,#444,#222);" onclick="alert('Settings Coming Soon!')">SETTINGS</button>
+      <button class="btn-action" style="background:linear-gradient(135deg,#444,#222);" onclick="alert('Thanks for playing!')">EXIT</button>
     </div>
   </div>
 
   <div id="over" class="panel hide">
     <div class="box">
-      <h1 style="color:#f43f5e;">CRASHED!</h1>
+      <h1 style="color:#ff4444;">CRASHED!</h1>
       <p style="margin: 15px 0; font-size:18px;">Final Score: <b id="final-score" style="color:#38bdf8;">0</b></p>
       <button class="btn-action" id="again-btn">TRY AGAIN</button>
     </div>
@@ -152,156 +119,129 @@ const c = document.getElementById('c'), ctx = c.getContext('2d');
 let W, H, horizon, run = false, lastTime = 0;
 let carX = 0, speed = 0, maxSpeed = 260, score = 0, elapsed = 0;
 let traffic = [], key = { l: false, r: false };
-let particles = [];
 
 function resize() {
   W = innerWidth; H = innerHeight;
   c.width = W * devicePixelRatio; c.height = H * devicePixelRatio;
   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-  horizon = H * 0.42;
+  horizon = H * 0.45;
 }
 window.addEventListener('resize', resize);
 resize();
 
+// **Realistic Car Drawing (Rear View - White Stripes)**
 function drawSportsCar(x, y, scale, color, isPlayer = false) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale, scale);
 
-  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.beginPath();
-  ctx.ellipse(0, 20, 60, 14, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 20, 55, 12, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#0f172a';
-  ctx.fillRect(-55, 4, 18, 28);
-  ctx.fillRect(37, 4, 18, 28);
+  // Tires
+  ctx.fillStyle = '#111';
+  ctx.fillRect(-50, 2, 16, 28);
+  ctx.fillRect(34, 2, 16, 28);
 
-  ctx.strokeStyle = '#00ffff';
-  ctx.lineWidth = 2;
-  ctx.shadowColor = '#00ffff';
-  ctx.shadowBlur = 8;
-  ctx.strokeRect(-48, 8, 4, 20);
-  ctx.strokeRect(44, 8, 4, 20);
-  ctx.shadowBlur = 0;
-
-  let bodyGrad = ctx.createLinearGradient(-46, 0, 46, 0);
-  if (isPlayer) {
-    bodyGrad.addColorStop(0, '#4facfe');
-    bodyGrad.addColorStop(0.5, '#00f2fe');
-    bodyGrad.addColorStop(1, '#4facfe');
-  } else {
-    bodyGrad.addColorStop(0, '#334155');
-    bodyGrad.addColorStop(0.5, '#64748b');
-    bodyGrad.addColorStop(1, '#334155');
-  }
-  ctx.fillStyle = bodyGrad;
+  // Body
+  ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.roundRect(-48, -16, 96, 42, [12, 12, 8, 8]);
+  ctx.roundRect(-45, -15, 90, 40, [10, 10, 6, 6]);
   ctx.fill();
 
+  // White Racing Stripes (for player)
   if (isPlayer) {
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    ctx.fillRect(-10, -16, 8, 42);
-    ctx.fillRect(2, -16, 8, 42);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(-6, -15, 5, 40);
+    ctx.fillRect(3, -15, 5, 40);
   }
 
-  ctx.fillStyle = '#020617';
+  // Cabin / Windshield
+  ctx.fillStyle = '#0a0a0a';
   ctx.beginPath();
-  ctx.moveTo(-35, -16);
-  ctx.lineTo(35, -16);
-  ctx.lineTo(25, -42);
-  ctx.lineTo(-25, -42);
+  ctx.moveTo(-30, -15);
+  ctx.lineTo(30, -15);
+  ctx.lineTo(22, -38);
+  ctx.lineTo(-22, -38);
   ctx.closePath();
   ctx.fill();
 
-  let glassGrad = ctx.createLinearGradient(-20, -35, 20, -16);
-  glassGrad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
-  glassGrad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
-  ctx.fillStyle = glassGrad;
+  // Glass Reflection
+  ctx.fillStyle = 'rgba(100,200,255,0.3)';
   ctx.beginPath();
-  ctx.moveTo(-20, -38);
-  ctx.lineTo(10, -38);
-  ctx.lineTo(5, -18);
-  ctx.lineTo(-25, -18);
+  ctx.moveTo(-15, -35);
+  ctx.lineTo(10, -35);
+  ctx.lineTo(5, -17);
+  ctx.lineTo(-18, -17);
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = '#ff1744';
-  ctx.shadowColor = '#ff1744';
-  ctx.shadowBlur = 15;
-  ctx.fillRect(-45, -8, 22, 8);
-  ctx.fillRect(23, -8, 22, 8);
-  ctx.shadowBlur = 0;
-
-  ctx.fillStyle = isPlayer ? '#1e3a8a' : '#1e293b';
-  ctx.fillRect(-40, -42, 80, 4);
-  ctx.fillRect(-44, -38, 88, 3);
-
-  if (isPlayer && speed > 200) {
-    ctx.fillStyle = '#ff6600';
-    ctx.shadowColor = '#ff6600';
-    ctx.shadowBlur = 20;
-    ctx.beginPath();
-    ctx.arc(-22, 26, 6, 0, Math.PI * 2);
-    ctx.arc(14, 26, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  }
+  // Tail Lights
+  ctx.fillStyle = '#ff0000';
+  ctx.fillRect(-40, -7, 18, 7);
+  ctx.fillRect(22, -7, 18, 7);
 
   ctx.restore();
 }
 
+// **Realistic Environment**
 function drawEnvironment() {
+  // Sky
   let sky = ctx.createLinearGradient(0, 0, 0, horizon);
-  sky.addColorStop(0, '#1e1b4b');
-  sky.addColorStop(0.5, '#7c3aed');
-  sky.addColorStop(1, '#f97316');
+  sky.addColorStop(0, '#4a90d9');
+  sky.addColorStop(1, '#87ceeb');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, horizon);
 
-  ctx.fillStyle = '#fbbf24';
-  ctx.shadowColor = '#fbbf24';
-  ctx.shadowBlur = 30;
-  ctx.beginPath();
-  ctx.arc(W * 0.8, horizon - 20, 30, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
+  // Clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  for (let i = 0; i < 5; i++) {
+    let cx = (i * 300 + 100) % W;
+    let cy = 50 + i * 25;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+    ctx.arc(cx + 20, cy - 10, 25, 0, Math.PI * 2);
+    ctx.arc(cx + 40, cy, 20, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
-  ctx.fillStyle = '#312e81';
+  // Mountains (Layered)
+  ctx.fillStyle = '#2d5a27';
   ctx.beginPath();
   ctx.moveTo(0, horizon);
-  ctx.lineTo(W * 0.2, horizon - 80);
-  ctx.lineTo(W * 0.5, horizon - 20);
-  ctx.lineTo(W * 0.8, horizon - 100);
+  ctx.lineTo(W * 0.2, horizon - 70);
+  ctx.lineTo(W * 0.4, horizon - 20);
+  ctx.lineTo(W * 0.6, horizon - 80);
+  ctx.lineTo(W * 0.8, horizon - 30);
   ctx.lineTo(W, horizon);
   ctx.fill();
 
-  ctx.fillStyle = '#1e1b4b';
+  ctx.fillStyle = '#1e4d1e';
   ctx.beginPath();
   ctx.moveTo(0, horizon);
   ctx.lineTo(W * 0.3, horizon - 40);
-  ctx.lineTo(W * 0.6, horizon - 70);
-  ctx.lineTo(W, horizon - 30);
+  ctx.lineTo(W * 0.5, horizon - 60);
+  ctx.lineTo(W * 0.7, horizon - 20);
+  ctx.lineTo(W, horizon);
   ctx.fill();
 
-  ctx.fillStyle = '#064e3b';
+  // Ground
+  ctx.fillStyle = '#3e7d32';
   ctx.fillRect(0, horizon, W, H - horizon);
-
-  ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
-  ctx.fillRect(0, horizon, W, 5);
 }
 
+// **Road with Side Stripes**
 let roadOffset = 0;
 function drawRoad() {
-  let roadBottomW = Math.min(W * 0.94, 650);
-  let roadTopW = roadBottomW * 0.12;
+  let roadBottomW = Math.min(W * 0.9, 600);
+  let roadTopW = roadBottomW * 0.1;
   let cx = W / 2;
 
-  let roadGrad = ctx.createLinearGradient(0, horizon, 0, H);
-  roadGrad.addColorStop(0, '#1e293b');
-  roadGrad.addColorStop(1, '#0f172a');
-  ctx.fillStyle = roadGrad;
+  // Road
+  ctx.fillStyle = '#3a3a3a';
   ctx.beginPath();
   ctx.moveTo(cx - roadTopW / 2, horizon);
   ctx.lineTo(cx + roadTopW / 2, horizon);
@@ -310,59 +250,40 @@ function drawRoad() {
   ctx.closePath();
   ctx.fill();
 
-  roadOffset = (roadOffset + speed * 0.08) % 60;
-  ctx.strokeStyle = '#00ffff';
-  ctx.lineWidth = 3;
-  ctx.setLineDash([30, 30]);
+  // Center Dashed Line
+  roadOffset = (roadOffset + speed * 0.05) % 50;
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([20, 20]);
   ctx.lineDashOffset = -roadOffset;
-  ctx.shadowColor = '#00ffff';
-  ctx.shadowBlur = 10;
-
   ctx.beginPath();
   ctx.moveTo(cx, horizon);
   ctx.lineTo(cx, H);
   ctx.stroke();
+  ctx.setLineDash([]);
 
-  ctx.strokeStyle = '#ff00ff';
-  ctx.shadowColor = '#ff00ff';
-  ctx.lineWidth = 4;
-
+  // Road Edges
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 5;
   ctx.beginPath();
   ctx.moveTo(cx - roadTopW / 2, horizon);
   ctx.lineTo(cx - roadBottomW / 2, H);
   ctx.stroke();
-
   ctx.beginPath();
   ctx.moveTo(cx + roadTopW / 2, horizon);
   ctx.lineTo(cx + roadBottomW / 2, H);
   ctx.stroke();
-
-  ctx.setLineDash([]);
-  ctx.shadowBlur = 0;
 }
 
 function spawnTraffic() {
-  const lanes = [-0.65, 0, 0.65];
+  const lanes = [-0.6, 0, 0.6];
   const lane = lanes[Math.floor(Math.random() * lanes.length)];
-  const colors = ['#2563eb', '#eab308', '#64748b', '#10b981'];
+  const colors = ['#1e90ff', '#ff8c00', '#808080', '#32cd32'];
   traffic.push({
     lane: lane,
     progress: 0.05,
     color: colors[Math.floor(Math.random() * colors.length)]
   });
-}
-
-function spawnParticles(x, y) {
-  for (let i = 0; i < 3; i++) {
-    particles.push({
-      x: x + (Math.random() - 0.5) * 40,
-      y: y + 20,
-      vx: (Math.random() - 0.5) * 100,
-      vy: Math.random() * 200 + 100,
-      life: 0.5 + Math.random() * 0.5,
-      color: Math.random() > 0.5 ? '#00ffff' : '#ff00ff'
-    });
-  }
 }
 
 function loop(t) {
@@ -371,36 +292,36 @@ function loop(t) {
   lastTime = t;
   elapsed += dt;
 
-  if (key.l) carX -= 1.6 * dt;
-  if (key.r) carX += 1.6 * dt;
+  if (key.l) carX -= 1.8 * dt;
+  if (key.r) carX += 1.8 * dt;
   carX = Math.max(-0.85, Math.min(0.85, carX));
 
-  speed = Math.min(maxSpeed, speed + dt * 25);
+  speed = Math.min(maxSpeed, speed + dt * 30);
   score += speed * dt * 0.2;
 
   ctx.clearRect(0, 0, W, H);
   drawEnvironment();
   drawRoad();
 
-  if (Math.random() < 0.02) spawnTraffic();
+  if (Math.random() < 0.015) spawnTraffic();
 
-  let playerBottomY = H - 90;
-  let roadBottomW = Math.min(W * 0.94, 650);
+  let playerBottomY = H - 100;
+  let roadBottomW = Math.min(W * 0.9, 600);
 
   for (let i = traffic.length - 1; i >= 0; i--) {
     let car = traffic[i];
-    car.progress += (speed * 0.0016) * dt;
+    car.progress += (speed * 0.0015) * dt;
 
     let y = horizon + (H - horizon) * Math.pow(car.progress, 2);
-    let currentRoadW = (roadBottomW * 0.12) + (roadBottomW - (roadBottomW * 0.12)) * car.progress;
+    let currentRoadW = (roadBottomW * 0.1) + (roadBottomW - (roadBottomW * 0.1)) * car.progress;
     let x = (W / 2) + car.lane * (currentRoadW / 2.3);
-    let scale = 0.2 + car.progress * 0.85;
+    let scale = 0.2 + car.progress * 0.9;
 
     drawSportsCar(x, y, scale, car.color, false);
 
-    if (car.progress > 0.82 && car.progress < 0.98) {
+    if (car.progress > 0.85 && car.progress < 0.98) {
       let px = (W / 2) + carX * (roadBottomW / 2.3);
-      if (Math.abs(px - x) < 55) {
+      if (Math.abs(px - x) < 50) {
         gameOver();
         return;
       }
@@ -409,25 +330,7 @@ function loop(t) {
   }
 
   let playerScreenX = (W / 2) + carX * (roadBottomW / 2.3);
-  spawnParticles(playerScreenX, playerBottomY);
-  drawSportsCar(playerScreenX, playerBottomY, 1.05, '#4facfe', true);
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    let p = particles[i];
-    p.life -= dt;
-    if (p.life <= 0) { particles.splice(i, 1); continue; }
-
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.vy -= 200 * dt;
-
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = p.life;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
+  drawSportsCar(playerScreenX, playerBottomY, 1.1, '#cc0000', true);
 
   document.getElementById('speedo-val').textContent = Math.floor(speed);
   document.getElementById('score').textContent = Math.floor(score);
@@ -440,7 +343,6 @@ function loop(t) {
 
 function startGame() {
   run = true; speed = 50; score = 0; elapsed = 0; carX = 0; traffic = [];
-  particles = [];
   document.getElementById('menu').classList.add('hide');
   document.getElementById('over').classList.add('hide');
   document.getElementById('hud').classList.remove('hide');
@@ -478,4 +380,4 @@ document.getElementById('start-btn').onclick = startGame;
 document.getElementById('again-btn').onclick = startGame;
 </script>
 </body>
-    </html>
+        </html>
