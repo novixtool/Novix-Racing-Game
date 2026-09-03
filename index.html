@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,52 +6,106 @@
   <title>Novix Racing 3D Style</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0f19; font-family: 'Segoe UI', Arial, sans-serif; }
+    html, body { 
+      width: 100%; height: 100%; overflow: hidden; 
+      background: linear-gradient(180deg, #1e1b4b 0%, #4c1d95 50%, #7c3aed 100%); 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+    }
     canvas { width: 100%; height: 100%; display: block; }
 
-    /* Top HUD */
     #hud {
       position: fixed; top: 14px; left: 16px; right: 16px;
       display: flex; justify-content: space-between; pointer-events: none;
       color: #fff; font-weight: 800; text-transform: uppercase;
     }
     .hud-card {
-      background: rgba(10, 15, 25, 0.75); border: 1px solid rgba(255,255,255,0.18);
-      padding: 6px 14px; border-radius: 8px; backdrop-filter: blur(4px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
-    .hud-title { font-size: 11px; color: #aaa; letter-spacing: 1px; }
-    .hud-val { font-size: 20px; font-weight: 900; color: #fff; }
+    .hud-title { 
+      font-size: 10px; 
+      color: #00ffff; 
+      letter-spacing: 2px; 
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+    .hud-val { 
+      font-size: 22px; 
+      font-weight: 900; 
+      color: #fff; 
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
 
-    /* Bottom Speedometer */
     #speedo-wrap {
       position: fixed; bottom: 20px; right: 20px; pointer-events: none;
-      width: 120px; height: 120px; background: radial-gradient(circle, rgba(20,20,30,0.85) 40%, rgba(0,0,0,0.95));
-      border: 3px solid rgba(255,255,255,0.25); border-radius: 50%;
+      width: 140px; height: 140px;
+      background: rgba(10, 15, 30, 0.7);
+      border: 2px solid #00ffff;
+      border-radius: 50%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+      box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.4),
+        inset 0 0 20px rgba(0, 255, 255, 0.2);
     }
-    #speedo-val { font-size: 32px; font-weight: 900; color: #fff; line-height: 1; }
-    #speedo-unit { font-size: 11px; font-weight: bold; color: #f43f5e; margin-top: 2px; }
+    #speedo-val {
+      font-size: 38px;
+      font-weight: 900;
+      color: #00ffff;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+    }
+    #speedo-unit {
+      font-size: 12px;
+      color: #ff00ff;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+      margin-top: 2px;
+    }
 
-    /* Mobile Controls (Screenshot match) */
     #controls {
       position: fixed; bottom: 30px; left: 24px;
       display: flex; gap: 18px; pointer-events: none;
     }
     .ctrl-btn {
       width: 68px; height: 68px; border-radius: 50%;
-      background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.45);
-      color: rgba(255,255,255,0.85); font-size: 26px; display: flex; align-items: center; justify-content: center;
+      background: rgba(0, 255, 255, 0.15);
+      border: 2px solid #00ffff;
+      color: #00ffff; font-size: 26px;
+      display: flex; align-items: center; justify-content: center;
       backdrop-filter: blur(6px); pointer-events: auto; outline: none; cursor: pointer;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
     }
-    .ctrl-btn:active { background: rgba(255,255,255,0.45); transform: scale(0.94); }
+    .ctrl-btn:active {
+      background: rgba(0, 255, 255, 0.4);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+      transform: scale(0.92);
+    }
 
-    /* Menus */
-    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); }
-    .box { background: #121826; border: 1px solid #334155; color: white; padding: 30px 24px; border-radius: 20px; text-align: center; width: 88%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
-    .box h1 { font-size: 32px; color: #ef4444; font-weight: 900; margin-bottom: 6px; letter-spacing: 1px; }
-    .btn-action { margin-top: 20px; padding: 14px 34px; border: 0; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 20px rgba(239,68,68,0.5); }
+    .panel { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); }
+    .box {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      border: 1px solid #00ffff;
+      color: white; padding: 30px 24px; border-radius: 20px;
+      text-align: center; width: 88%; max-width: 380px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    }
+    .box h1 {
+      font-size: 36px;
+      color: #00ffff;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 6px;
+    }
+    .btn-action {
+      margin-top: 20px; padding: 14px 34px; border: 0; border-radius: 12px;
+      background: linear-gradient(135deg, #00ffff, #00b3ff);
+      color: #0f0c29; font-size: 20px; font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 5px 25px rgba(0, 255, 255, 0.6);
+    }
     .hide { display: none !important; }
   </style>
 </head>
@@ -98,116 +152,156 @@ const c = document.getElementById('c'), ctx = c.getContext('2d');
 let W, H, horizon, run = false, lastTime = 0;
 let carX = 0, speed = 0, maxSpeed = 260, score = 0, elapsed = 0;
 let traffic = [], key = { l: false, r: false };
+let particles = [];
 
 function resize() {
   W = innerWidth; H = innerHeight;
   c.width = W * devicePixelRatio; c.height = H * devicePixelRatio;
   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-  horizon = H * 0.42; // Vanishing horizon
+  horizon = H * 0.42;
 }
 window.addEventListener('resize', resize);
 resize();
 
-// Realistic Car Graphics Drawing (Rear-View Sports Car with stripes)
 function drawSportsCar(x, y, scale, color, isPlayer = false) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale, scale);
 
-  // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
   ctx.beginPath();
-  ctx.ellipse(0, 18, 55, 12, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 20, 60, 14, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Wide Tires
   ctx.fillStyle = '#0f172a';
-  ctx.fillRect(-52, 2, 16, 26);
-  ctx.fillRect(36, 2, 16, 26);
+  ctx.fillRect(-55, 4, 18, 28);
+  ctx.fillRect(37, 4, 18, 28);
 
-  // Main Bumper & Body
-  ctx.fillStyle = color;
+  ctx.strokeStyle = '#00ffff';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = '#00ffff';
+  ctx.shadowBlur = 8;
+  ctx.strokeRect(-48, 8, 4, 20);
+  ctx.strokeRect(44, 8, 4, 20);
+  ctx.shadowBlur = 0;
+
+  let bodyGrad = ctx.createLinearGradient(-46, 0, 46, 0);
+  if (isPlayer) {
+    bodyGrad.addColorStop(0, '#4facfe');
+    bodyGrad.addColorStop(0.5, '#00f2fe');
+    bodyGrad.addColorStop(1, '#4facfe');
+  } else {
+    bodyGrad.addColorStop(0, '#334155');
+    bodyGrad.addColorStop(0.5, '#64748b');
+    bodyGrad.addColorStop(1, '#334155');
+  }
+  ctx.fillStyle = bodyGrad;
   ctx.beginPath();
-  ctx.roundRect(-46, -14, 92, 38, [12, 12, 8, 8]);
+  ctx.roundRect(-48, -16, 96, 42, [12, 12, 8, 8]);
   ctx.fill();
 
-  // Sports White Stripes
   if (isPlayer) {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(-8, -14, 6, 38);
-    ctx.fillRect(2, -14, 6, 38);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillRect(-10, -16, 8, 42);
+    ctx.fillRect(2, -16, 8, 42);
   }
 
-  // Cabin / Rear Windshield
-  ctx.fillStyle = '#090d16';
+  ctx.fillStyle = '#020617';
   ctx.beginPath();
-  ctx.moveTo(-32, -14);
-  ctx.lineTo(32, -14);
-  ctx.lineTo(24, -38);
-  ctx.lineTo(-24, -38);
+  ctx.moveTo(-35, -16);
+  ctx.lineTo(35, -16);
+  ctx.lineTo(25, -42);
+  ctx.lineTo(-25, -42);
   ctx.closePath();
   ctx.fill();
 
-  // Glass Reflection
-  ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+  let glassGrad = ctx.createLinearGradient(-20, -35, 20, -16);
+  glassGrad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
+  glassGrad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
+  ctx.fillStyle = glassGrad;
   ctx.beginPath();
-  ctx.moveTo(-18, -35);
-  ctx.lineTo(8, -35);
-  ctx.lineTo(2, -16);
-  ctx.lineTo(-22, -16);
+  ctx.moveTo(-20, -38);
+  ctx.lineTo(10, -38);
+  ctx.lineTo(5, -18);
+  ctx.lineTo(-25, -18);
   ctx.closePath();
   ctx.fill();
 
-  // Red Tail-lights
   ctx.fillStyle = '#ff1744';
   ctx.shadowColor = '#ff1744';
-  ctx.shadowBlur = 10;
-  ctx.fillRect(-42, -6, 20, 7);
-  ctx.fillRect(22, -6, 20, 7);
-
-  // Exhaust
+  ctx.shadowBlur = 15;
+  ctx.fillRect(-45, -8, 22, 8);
+  ctx.fillRect(23, -8, 22, 8);
   ctx.shadowBlur = 0;
-  ctx.fillStyle = '#64748b';
-  ctx.fillRect(-22, 22, 10, 5);
-  ctx.fillRect(12, 22, 10, 5);
+
+  ctx.fillStyle = isPlayer ? '#1e3a8a' : '#1e293b';
+  ctx.fillRect(-40, -42, 80, 4);
+  ctx.fillRect(-44, -38, 88, 3);
+
+  if (isPlayer && speed > 200) {
+    ctx.fillStyle = '#ff6600';
+    ctx.shadowColor = '#ff6600';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(-22, 26, 6, 0, Math.PI * 2);
+    ctx.arc(14, 26, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
 
   ctx.restore();
 }
 
-// Background mountains and sky
 function drawEnvironment() {
-  // Sky gradient
   let sky = ctx.createLinearGradient(0, 0, 0, horizon);
-  sky.addColorStop(0, '#0284c7');
-  sky.addColorStop(1, '#93c5fd');
+  sky.addColorStop(0, '#1e1b4b');
+  sky.addColorStop(0.5, '#7c3aed');
+  sky.addColorStop(1, '#f97316');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, horizon);
 
-  // Mountain silhouettes
-  ctx.fillStyle = '#334155';
+  ctx.fillStyle = '#fbbf24';
+  ctx.shadowColor = '#fbbf24';
+  ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.arc(W * 0.8, horizon - 20, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#312e81';
   ctx.beginPath();
   ctx.moveTo(0, horizon);
-  ctx.lineTo(W * 0.15, horizon - 70);
-  ctx.lineTo(W * 0.35, horizon);
-  ctx.lineTo(W * 0.6, horizon - 90);
-  ctx.lineTo(W * 0.85, horizon - 40);
+  ctx.lineTo(W * 0.2, horizon - 80);
+  ctx.lineTo(W * 0.5, horizon - 20);
+  ctx.lineTo(W * 0.8, horizon - 100);
   ctx.lineTo(W, horizon);
   ctx.fill();
 
-  // Roadside Grass / Terrain
-  ctx.fillStyle = '#15803d';
+  ctx.fillStyle = '#1e1b4b';
+  ctx.beginPath();
+  ctx.moveTo(0, horizon);
+  ctx.lineTo(W * 0.3, horizon - 40);
+  ctx.lineTo(W * 0.6, horizon - 70);
+  ctx.lineTo(W, horizon - 30);
+  ctx.fill();
+
+  ctx.fillStyle = '#064e3b';
   ctx.fillRect(0, horizon, W, H - horizon);
+
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+  ctx.fillRect(0, horizon, W, 5);
 }
 
-// Pseudo-3D Perspective Road
 let roadOffset = 0;
 function drawRoad() {
   let roadBottomW = Math.min(W * 0.94, 650);
   let roadTopW = roadBottomW * 0.12;
   let cx = W / 2;
 
-  // Road base
-  ctx.fillStyle = '#334155';
+  let roadGrad = ctx.createLinearGradient(0, horizon, 0, H);
+  roadGrad.addColorStop(0, '#1e293b');
+  roadGrad.addColorStop(1, '#0f172a');
+  ctx.fillStyle = roadGrad;
   ctx.beginPath();
   ctx.moveTo(cx - roadTopW / 2, horizon);
   ctx.lineTo(cx + roadTopW / 2, horizon);
@@ -216,18 +310,35 @@ function drawRoad() {
   ctx.closePath();
   ctx.fill();
 
-  // Perspective Striped Lines
-  roadOffset = (roadOffset + speed * 0.05) % 40;
-  ctx.strokeStyle = '#facc15';
-  ctx.lineWidth = 4;
-  ctx.setLineDash([20, 20]);
+  roadOffset = (roadOffset + speed * 0.08) % 60;
+  ctx.strokeStyle = '#00ffff';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([30, 30]);
   ctx.lineDashOffset = -roadOffset;
+  ctx.shadowColor = '#00ffff';
+  ctx.shadowBlur = 10;
 
   ctx.beginPath();
   ctx.moveTo(cx, horizon);
   ctx.lineTo(cx, H);
   ctx.stroke();
+
+  ctx.strokeStyle = '#ff00ff';
+  ctx.shadowColor = '#ff00ff';
+  ctx.lineWidth = 4;
+
+  ctx.beginPath();
+  ctx.moveTo(cx - roadTopW / 2, horizon);
+  ctx.lineTo(cx - roadBottomW / 2, H);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx + roadTopW / 2, horizon);
+  ctx.lineTo(cx + roadBottomW / 2, H);
+  ctx.stroke();
+
   ctx.setLineDash([]);
+  ctx.shadowBlur = 0;
 }
 
 function spawnTraffic() {
@@ -236,9 +347,22 @@ function spawnTraffic() {
   const colors = ['#2563eb', '#eab308', '#64748b', '#10b981'];
   traffic.push({
     lane: lane,
-    progress: 0.05, // 0 at horizon, 1 at player
+    progress: 0.05,
     color: colors[Math.floor(Math.random() * colors.length)]
   });
+}
+
+function spawnParticles(x, y) {
+  for (let i = 0; i < 3; i++) {
+    particles.push({
+      x: x + (Math.random() - 0.5) * 40,
+      y: y + 20,
+      vx: (Math.random() - 0.5) * 100,
+      vy: Math.random() * 200 + 100,
+      life: 0.5 + Math.random() * 0.5,
+      color: Math.random() > 0.5 ? '#00ffff' : '#ff00ff'
+    });
+  }
 }
 
 function loop(t) {
@@ -247,21 +371,17 @@ function loop(t) {
   lastTime = t;
   elapsed += dt;
 
-  // Car lateral speed
   if (key.l) carX -= 1.6 * dt;
   if (key.r) carX += 1.6 * dt;
   carX = Math.max(-0.85, Math.min(0.85, carX));
 
-  // Speed build-up
   speed = Math.min(maxSpeed, speed + dt * 25);
   score += speed * dt * 0.2;
 
-  // Render Scene
   ctx.clearRect(0, 0, W, H);
   drawEnvironment();
   drawRoad();
 
-  // Traffic AI & 3D projection
   if (Math.random() < 0.02) spawnTraffic();
 
   let playerBottomY = H - 90;
@@ -278,7 +398,6 @@ function loop(t) {
 
     drawSportsCar(x, y, scale, car.color, false);
 
-    // Collision Check
     if (car.progress > 0.82 && car.progress < 0.98) {
       let px = (W / 2) + carX * (roadBottomW / 2.3);
       if (Math.abs(px - x) < 55) {
@@ -289,11 +408,27 @@ function loop(t) {
     if (car.progress > 1.1) traffic.splice(i, 1);
   }
 
-  // Draw Player Car
   let playerScreenX = (W / 2) + carX * (roadBottomW / 2.3);
-  drawSportsCar(playerScreenX, playerBottomY, 1.05, '#dc2626', true);
+  spawnParticles(playerScreenX, playerBottomY);
+  drawSportsCar(playerScreenX, playerBottomY, 1.05, '#4facfe', true);
 
-  // Update UI Elements
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
+    p.life -= dt;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy -= 200 * dt;
+
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.life;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
   document.getElementById('speedo-val').textContent = Math.floor(speed);
   document.getElementById('score').textContent = Math.floor(score);
   let mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
@@ -305,6 +440,7 @@ function loop(t) {
 
 function startGame() {
   run = true; speed = 50; score = 0; elapsed = 0; carX = 0; traffic = [];
+  particles = [];
   document.getElementById('menu').classList.add('hide');
   document.getElementById('over').classList.add('hide');
   document.getElementById('hud').classList.remove('hide');
@@ -320,7 +456,6 @@ function gameOver() {
   document.getElementById('over').classList.remove('hide');
 }
 
-// Controls
 function bindTouch(id, k) {
   const el = document.getElementById(id);
   el.addEventListener('pointerdown', e => { e.preventDefault(); key[k] = true; });
@@ -343,4 +478,4 @@ document.getElementById('start-btn').onclick = startGame;
 document.getElementById('again-btn').onclick = startGame;
 </script>
 </body>
-</html>
+    </html>
